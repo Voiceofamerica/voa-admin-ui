@@ -3,7 +3,15 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  firebase: {
+    apiKey: "AIzaSyCkWz0ZptZUVnikM66diQEGJrDRz4k68XU",
+    authDomain: "voa-mobileapp-push-auth.firebaseapp.com",
+    databaseURL: "https://voa-mobileapp-push-auth.firebaseio.com",
+    projectId: "voa-mobileapp-push-auth",
+    storageBucket: "voa-mobileapp-push-auth.appspot.com",
+    messagingSenderId: "256726183248"
+ }
 };
 
 /*
