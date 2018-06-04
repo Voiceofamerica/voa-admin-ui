@@ -4,15 +4,16 @@
 
 export const environment = {
   production: false,
+  baseUrl: '',
   firebase: {
-    apiKey: "AIzaSyCkWz0ZptZUVnikM66diQEGJrDRz4k68XU",
-    authDomain: "voa-mobileapp-push-auth.firebaseapp.com",
-    databaseURL: "https://voa-mobileapp-push-auth.firebaseio.com",
-    projectId: "voa-mobileapp-push-auth",
-    storageBucket: "voa-mobileapp-push-auth.appspot.com",
-    messagingSenderId: "256726183248"
- }
-};
+    apiKey: 'AIzaSyD5g0T6cf3qmw_siihBRk8F_GtiOFeOtRQ',
+    authDomain: 'voa-admin-dashboard.firebaseapp.com',
+    databaseURL: 'https://voa-admin-dashboard.firebaseio.com',
+    projectId: 'voa-admin-dashboard',
+    storageBucket: '',
+    messagingSenderId: '240913753196',
+  },
+}
 
 /*
  * In development mode, to ignore zone related error stack frames such as
