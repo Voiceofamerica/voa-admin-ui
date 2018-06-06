@@ -1,24 +1,21 @@
 import { Validators } from '@angular/forms'
+import * as moment from 'moment'
 
-export const OptionalTextValidation = [Validators.minLength(2), Validators.maxLength(50)]
+export const OptionalTextValidation = [Validators.minLength(2)]
 export const RequiredTextValidation = OptionalTextValidation.concat([Validators.required])
-export const OneCharValidation = [Validators.minLength(1), Validators.maxLength(1)]
 export const EmailValidation = [Validators.required, Validators.email]
 export const PasswordValidation = [
   Validators.required,
   Validators.minLength(8),
   Validators.maxLength(50),
 ]
-export const BirthDateValidation = [
+export const PushDateValidation = [
   Validators.required,
-  Validators.min(new Date().getFullYear() - 100),
-  Validators.max(new Date().getFullYear()),
+  Validators.min(moment().unix()),
+  Validators.max(
+    moment()
+      .add('months', 1)
+      .unix()
+  ),
 ]
-export const USAZipCodeValidation = [
-  Validators.required,
-  Validators.pattern(/^\d{5}(?:[-\s]\d{4})?$/),
-]
-export const USAPhoneNumberValidation = [
-  Validators.required,
-  Validators.pattern(/^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$/),
-]
+export const NumericInputValidation = [Validators.pattern('^[0-9]*$')]

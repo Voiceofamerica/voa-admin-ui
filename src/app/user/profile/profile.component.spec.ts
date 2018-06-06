@@ -3,8 +3,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing'
 import { commonTestingModules, commonTestingProviders } from '../../common/common.testing'
 import { UserMaterialModule } from '../user.material.module'
 import { ProfileComponent } from './profile.component'
-import { UserService } from '../user/user.service';
-import { UserServiceFake } from '../user/user.service.fake';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent
@@ -12,9 +10,7 @@ describe('ProfileComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      providers: commonTestingProviders.concat([
-        { provide: UserService, useClass: UserServiceFake },
-      ]),
+      providers: commonTestingProviders,
       imports: commonTestingModules.concat([UserMaterialModule]),
       declarations: [ProfileComponent],
     }).compileComponents()

@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment'
 import { transformError } from '../common/common'
 import { CacheService } from './cache.service'
 import { Role } from './role.enum'
+import { AngularFireAuth } from 'angularfire2/auth'
 
 export interface IAuthService {
   authStatus: BehaviorSubject<IAuthStatus>
@@ -33,57 +34,54 @@ export const defaultAuthStatus = {
 
 @Injectable()
 export class AuthService extends CacheService implements IAuthService {
-  private readonly authProvider: (
-    email: string,
-    password: string
-  ) => Observable<IServerAuthResponse>
+  private readonly authProvider: (email: string, password: string) => Promise<any>
   authStatus = new BehaviorSubject<IAuthStatus>(
     this.getItem('authStatus') || defaultAuthStatus
   )
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, public afAuth: AngularFireAuth) {
     super()
     this.authStatus.subscribe(authStatus => this.setItem('authStatus', authStatus))
-    // Fake login function to simulate roles
-    // Example of a real login call to server-side
-    this.authProvider = this.exampleAuthProvider
+    this.authProvider = this.firebaseAuth
   }
 
   login(email: string, password: string): Observable<IAuthStatus> {
     this.logout()
 
-    const loginResponse = this.authProvider(email, password).pipe(
-      map(value => {
-        this.setToken(value.accessToken)
-        return decode(value.accessToken) as IAuthStatus
-      }),
-      catchError(transformError)
-    )
+    const loginResponse = this.authStatus
 
-    loginResponse.subscribe(
+    this.authProvider(email, password).then(
       res => {
-        this.authStatus.next(res)
+        console.log(this.afAuth.user)
+        this.authStatus.next({
+          isAuthenticated: true,
+          userRole: Role.Admin,
+          userId: res.user.uid,
+        })
       },
       err => {
         this.logout()
-        return observableThrowError(err)
+        return observableThrowError(err.message)
       }
     )
+
+    // .pipe(
+    //   map(value => {
+    //     this.setToken(value.accessToken)
+    //     return decode(value.accessToken) as IAuthStatus
+    //   }),
+    //   catchError(transformError)
+    // )
 
     return loginResponse
   }
 
-  private exampleAuthProvider(
-    email: string,
-    password: string
-  ): Observable<IServerAuthResponse> {
-    return this.httpClient.post<IServerAuthResponse>(`${environment.baseUrl}/v1/login`, {
-      email: email,
-      password: password,
-    })
+  private firebaseAuth(email: string, password: string): Promise<any> {
+    return this.afAuth.auth.signInWithEmailAndPassword(email, password)
   }
 
   logout() {
+    this.afAuth.auth.signOut()
     this.clearToken()
     this.authStatus.next(defaultAuthStatus)
   }
