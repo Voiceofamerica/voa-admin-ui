@@ -63,7 +63,7 @@ export class LoginComponent implements OnInit {
   homeRoutePerRole(role: Role) {
     switch (role) {
       default:
-        return '/user/profile'
+        return '/user/send-pn'
     }
   }
 }

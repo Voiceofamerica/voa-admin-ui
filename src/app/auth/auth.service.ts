@@ -8,6 +8,7 @@ import { transformError } from '../common/common'
 import { CacheService } from './cache.service'
 import { Role } from './role.enum'
 import { AngularFireAuth } from 'angularfire2/auth'
+import { User } from 'firebase'
 
 export interface IAuthService {
   authStatus: BehaviorSubject<IAuthStatus>
@@ -38,10 +39,12 @@ export class AuthService extends CacheService implements IAuthService {
   authStatus = new BehaviorSubject<IAuthStatus>(
     this.getItem('authStatus') || defaultAuthStatus
   )
+  currentUser = new BehaviorSubject<User>(null)
 
-  constructor(private httpClient: HttpClient, public afAuth: AngularFireAuth) {
+  constructor(private httpClient: HttpClient, private afAuth: AngularFireAuth) {
     super()
     this.authStatus.subscribe(authStatus => this.setItem('authStatus', authStatus))
+    this.afAuth.user.subscribe(user => this.currentUser.next(user))
     this.authProvider = this.firebaseAuth
   }
 
@@ -52,7 +55,6 @@ export class AuthService extends CacheService implements IAuthService {
 
     this.authProvider(email, password).then(
       res => {
-        console.log(this.afAuth.user)
         this.authStatus.next({
           isAuthenticated: true,
           userRole: Role.Admin,

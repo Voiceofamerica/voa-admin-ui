@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core'
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms'
-import { map, startWith } from 'rxjs/operators'
 import { AuthService } from '../../auth/auth.service'
 import { Role } from '../../auth/role.enum'
-import { FirebaseAuth } from 'angularfire2'
 import { User } from 'firebase'
 
 @Component({
@@ -27,19 +24,25 @@ import { User } from 'firebase'
       </mat-card-actions>
     </mat-card>
   `,
+  styles: [
+    `
+      .bold {
+        font-weight: bold;
+      }
+    `,
+  ],
 })
 export class ProfileComponent implements OnInit {
   editMode = false
   currentUserRole = Role.None
   currentUser: User
 
-  constructor(private authService: AuthService, private afAuth: FirebaseAuth) {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit() {
     this.authService.authStatus.subscribe(
       authStatus => (this.currentUserRole = authStatus.userRole)
     )
-
-    this.currentUser = this.afAuth.currentUser
+    this.authService.currentUser.subscribe(user => (this.currentUser = user))
   }
 }

@@ -14,7 +14,7 @@ export const PushDateValidation = [
   Validators.min(moment().unix()),
   Validators.max(
     moment()
-      .add('months', 1)
+      .add(1, 'months')
       .unix()
   ),
 ]

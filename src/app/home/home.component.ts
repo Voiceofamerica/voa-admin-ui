@@ -8,7 +8,9 @@ import { AuthService } from '../auth/auth.service'
       <app-login></app-login>
     </div>
     <div *ngIf="!displayLogin">
-      <span class="mat-display-3"></span>
+     <a mat-button routerLink="/user/send-pn">
+        Send Push Notifications
+      </a>
     </div>
   `,
 })
