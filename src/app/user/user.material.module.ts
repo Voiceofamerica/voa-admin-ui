@@ -8,6 +8,7 @@ import {
   MatRadioModule,
   MatSelectModule,
   MatStepperModule,
+  MatSlideToggleModule,
 } from '@angular/material'
 
 @NgModule({
@@ -21,6 +22,7 @@ import {
     MatAutocompleteModule,
     MatNativeDateModule,
     MatLineModule,
+    MatSlideToggleModule,
   ],
   exports: [
     MatStepperModule,
@@ -32,6 +34,7 @@ import {
     MatAutocompleteModule,
     MatNativeDateModule,
     MatLineModule,
+    MatSlideToggleModule,
   ],
 })
 export class UserMaterialModule {}

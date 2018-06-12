@@ -13,6 +13,7 @@ import { AuthGuard } from '../auth/auth-guard.service'
 import { UserMaterialModule } from './user.material.module'
 import { SendPushNotificationComponent } from './send-push-notification/send-push-notification.component'
 import { PushNotificationService } from './push-notification/push-notification.service'
+import { DateValueAccessorDirective } from '../common/date-value-accessor'
 
 @NgModule({
   imports: [
@@ -25,7 +26,12 @@ import { PushNotificationService } from './push-notification/push-notification.s
     FlexLayoutModule,
     UserMaterialModule,
   ],
-  declarations: [ProfileComponent, LogoutComponent, SendPushNotificationComponent],
+  declarations: [
+    ProfileComponent,
+    LogoutComponent,
+    SendPushNotificationComponent,
+    DateValueAccessorDirective,
+  ],
   providers: [AuthGuard, PushNotificationService],
 })
 export class UserModule {}

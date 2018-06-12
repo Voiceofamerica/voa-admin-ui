@@ -8,7 +8,7 @@
       <ng-template matStepLabel>Message Details</ng-template>
       <div class="stepContent">
         <div fxLayout="row" fxLayoutGap="10px">
-          <mat-form-field>
+          <mat-form-field fxFlex>
             <input matInput placeholder="Title" aria-label="Title" formControlName="title">
             <mat-hint>Applies to Android devices or iOS wearable devices.</mat-hint>
             <mat-error *ngIf="pushForm.get('title').hasError('required')">
@@ -19,45 +19,37 @@
             </mat-error>
           </mat-form-field>
         </div>
-        <!-- <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="10px">
-        <mat-form-field fxFlex="50%">
-          <input matInput placeholder="Date of Birth" aria-label="Date of Birth" formControlName="dateOfBirth" [matDatepicker]="dateOfBirthPicker">
-          <mat-hint *ngIf="pushForm.get('dateOfBirth').touched">{{this.age}} year(s) old</mat-hint>
-          <mat-datepicker-toggle matSuffix [for]="dateOfBirthPicker"></mat-datepicker-toggle>
-          <mat-datepicker #dateOfBirthPicker></mat-datepicker>
-          <mat-error *ngIf="pushForm.get('dateOfBirth').invalid">
-            Date must be with the last 100 years
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field fxFlex="50%">
-          <input matInput placeholder="E-mail" aria-label="E-mail" formControlName="email">
-          <mat-hint>Only your manager can update your e-mail.</mat-hint>
-          <mat-error *ngIf="pushForm.get('email').invalid">
-            A valid E-mail is required
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div fxLayout="row" fxLayout.lt-sm="column" class="margin-top" fxLayoutGap="10px">
-        <div fxFlex>
-          <mat-label class="mat-body-1">Role</mat-label>
-          <mat-radio-group formControlName="role">
-            <mat-radio-button style="margin-right: 10px;" value="this.Role.None">
-              <span class="mat-body-1">None</span>
-            </mat-radio-button>
-            <mat-radio-button style="margin-right: 10px;" value="this.Role.Cashier">
-              <span class="mat-body-1">Cashier</span>
-            </mat-radio-button>
-            <mat-radio-button style="margin-right: 10px;" value="this.Role.Clerk">
-              <span class="mat-body-1">Clerk</span>
-            </mat-radio-button>
-            <mat-radio-button style="margin-right: 10px;" value="this.Role.Manager">
-              <span class="mat-body-1">Manager</span>
-            </mat-radio-button>
-          </mat-radio-group>
-          <mat-error *ngIf="pushForm.get('role').hasError('required') && pushForm.get('role').touched">
-            <span class="mat-caption">Role is required</span>
-          </mat-error>
-        </div> -->
+        <div fxLayout="row" fxLayoutGap="10px">
+          <mat-form-field fxFlex>
+            <textarea matInput placeholder="Message" aria-label="Message" formControlName="message" rows=5>
+            </textarea>
+            <mat-error *ngIf="pushForm.get('message').hasError('required')">
+              Message is required
+            </mat-error>
+            <mat-error *ngIf="pushForm.get('message').hasError('minLength')">
+              Must be at least 2 characters
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="10px">
+          <mat-form-field fxFlex="50%">
+            <input matInput placeholder="Label" aria-label="Label" formControlName="label">
+            <mat-hint>Used to identify this message for Analytics purposes. Not shown to users.</mat-hint>
+            <mat-error *ngIf="pushForm.get('label').hasError('required')">
+              Label is required
+            </mat-error>
+            <mat-error *ngIf="pushForm.get('label').hasError('minLength')">
+              Must be at least 2 characters
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field fxFlex="50%">
+            <input matInput placeholder="Article ID" aria-label="Article ID" formControlName="articleId">
+            <mat-hint>Optional numerical ID of an Article that should open in the app.</mat-hint>
+            <mat-error *ngIf="pushForm.get('articleId').hasError('pattern')">
+              Must be all numeric digits
+            </mat-error>
+          </mat-form-field>
+        </div>
       </div>
       <div fxLayout="row" class="margin-top">
         <div class="flex-spacer"></div>
@@ -70,94 +62,42 @@
     <form [formGroup]="pushForm">
       <ng-template matStepLabel>Delivery</ng-template>
       <div class="stepContent">
-        <!-- <div fxLayout="row" fxLayout.lt-sm="column" [formGroup]="pushForm.get('address')" fxLayoutGap="10px">
-          <mat-form-field fxFlex>
-            <input matInput placeholder="Address Line 1" aria-label="Address Line 1" formControlName="line1">
-            <mat-error *ngIf="pushForm.get('address').get('line1').hasError('required')">
-              Line 1 is required
-            </mat-error>
-            <mat-error *ngIf="pushForm.get('address').get('line1').hasError('minLength')">
-              Must be at least 2 characters
-            </mat-error>
-            <mat-error *ngIf="pushForm.get('address').get('line1').hasError('maxLength')">
-              Can't exceed 50 characters
-            </mat-error>
-          </mat-form-field>
+        <div class="mat-body-2 bold">Schedule Delivery (optional)</div>
+        <div fxLayout="column" fxLayoutGap="10px">
+          <mat-slide-toggle aria-label="Schedule Delivery" (change)="scheduleDeliveryChange($event)">{{scheduleDelivery ? 'Send Later' : 'Send Now'}} </mat-slide-toggle>
+          <div class="mat-caption">When this message should be sent. Now or schedule up to one month in advance.</div>
         </div>
-        <div fxLayout="row" fxLayout.lt-sm="column" [formGroup]="pushForm.get('address')" fxLayoutGap="10px">
-          <mat-form-field fxFlex>
-            <input matInput placeholder="Address Line 2" aria-label="Address Line 2" formControlName="line2">
-            <mat-hint>Optional</mat-hint>
-            <mat-error *ngIf="pushForm.get('address').get('line2').hasError('minLength')">
-              Must be at least 2 characters
+        <div *ngIf="scheduleDelivery" fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="10px">
+          <mat-form-field fxFlex="33%">
+            <input matInput class="date" [min]="minDate" [max]="maxDate" placeholder="UTC Delivery Date" aria-label="UTC Delivery Date"
+              formControlName="deliveryDate" [matDatepicker]="deliveryDatePicker">
+            <mat-datepicker-toggle matSuffix [for]="deliveryDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #deliveryDatePicker></mat-datepicker>
+            <mat-error *ngIf="pushForm.get('deliveryDate').hasError('required')">
+              Date is required
             </mat-error>
-            <mat-error *ngIf="pushForm.get('address').get('line2').hasError('maxLength')">
-              Can't exceed 50 characters
+            <mat-error *ngIf="pushForm.get('deliveryDate').invalid">
+              Date can only be up to one month from today.
             </mat-error>
           </mat-form-field>
+          <mat-form-field fxFlex="33%">
+            <input matInput placeholder="UTC Delivery Time" aria-label="UTC Delivery Time" formControlName="deliveryTime" type="time"
+              (change)="onTimeChange($event)">
+          </mat-form-field>
+          <div fxFlex="33%" fxLayoutAlign="start center">
+            <mat-slide-toggle aria-label="Recipient Time Zone" formControlName="receipientTimeZone">{{pushForm.get('receipientTimeZone').value ? 'Recipient\'s Time Zone' : 'Eastern Time Zone'}}</mat-slide-toggle>
+          </div>
         </div>
-        <div fxLayout="row" fxLayout.lt-sm="column" [formGroup]="pushForm.get('address')" fxLayoutGap="10px">
-          <mat-form-field fxFlex="40%">
-            <input matInput placeholder="City" aria-label="City" formControlName="city">
-            <mat-error *ngIf="pushForm.get('address').get('city').hasError('required')">
-              City is required
-            </mat-error>
-            <mat-error *ngIf="pushForm.get('address').get('city').hasError('minLength')">
-              Must be at least 2 characters
-            </mat-error>
-            <mat-error *ngIf="pushForm.get('address').get('city').hasError('maxLength')">
-              Can't exceed 50 characters
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field fxFlex="30%">
-            <input type="text" placeholder="State" aria-label="State" matInput formControlName="state" [matAutocomplete]="stateAuto">
-            <mat-autocomplete #stateAuto="matAutocomplete">
-              <mat-option *ngFor="let state of states | async" [value]="state.name">
-                {{ state.name }}
-              </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="pushForm.get('address').get('state').hasError('required')">
-              State is required
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field fxFlex="30%">
-            <input matInput placeholder="Zip Code" aria-label="Zip Code" formControlName="zip">
-            <mat-error *ngIf="pushForm.get('address').get('zip').invalid">
-              A valid Zip Code is required
-            </mat-error>
-          </mat-form-field>
+        <div *ngIf="scheduleDelivery" fxLayout="column" fxLayoutGap="10px">
+          <div fxLayout="row" class="mat-body-2">Selected Date</div>
+          <div fxLayout="row" class="mat-body-1">{{scheduledDate}}</div>
         </div>
-        <div fxLayout="row" fxLayout.lt-sm="column">
-          <mat-list formArrayName="phones">
-            <h2 mat-subheader>Phone Number(s)</h2>
-            <button mat-button (click)="this.addPhone()">
-              <mat-icon>add</mat-icon>Add Phone</button>
-            <mat-list-item *ngFor="let position of this.targetArray.controls let i=index" [formGroupName]="i">
-              <mat-form-field fxFlex="100px">
-                <mat-select placeholder="Type" formControlName="type">
-                  <mat-option *ngFor="let type of this.PhoneTypes" [value]="type">
-                    {{ type }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-              <mat-form-field fxFlex fxFlexOffset="10px">
-                <input matInput type="text" placeholder="Number" formControlName="number">
-                <mat-error *ngIf="this.targetArray.controls[i].invalid">
-                  A valid phone number is required
-                </mat-error>
-              </mat-form-field>
-              <button fxFlex="33px" mat-icon-button (click)="this.targetArray.removeAt(i)">
-                <mat-icon>close</mat-icon>
-              </button>
-            </mat-list-item>
-          </mat-list>
-        </div> -->
-      </div>
-      <div fxLayout="row" class="margin-top">
-        <button mat-button matStepperPrevious color="accent">Back</button>
-        <div class="flex-spacer"></div>
-        <div *ngIf="formError" class="mat-caption error">{{formError}}</div>
-        <button mat-raised-button matStepperNext color="accent">Next</button>
+        <div fxLayout="row" class="margin-top">
+          <button mat-button matStepperPrevious color="accent">Back</button>
+          <div class="flex-spacer"></div>
+          <div *ngIf="formError" class="mat-caption error">{{formError}}</div>
+          <button mat-raised-button matStepperNext color="accent">Next</button>
+        </div>
       </div>
     </form>
   </mat-step>
@@ -165,14 +105,33 @@
     <form [formGroup]="pushForm" (ngSubmit)="send(pushForm)">
       <ng-template matStepLabel>Target(s)</ng-template>
       <div class="stepContent">
-        Confirm and send push notifications.
+        <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="10px">
+          <mat-list formArrayName="target">
+            <h2 mat-subheader>Select Target Language(s)</h2>
+            <button mat-button (click)="this.addTarget()" type="button">
+              <mat-icon>add</mat-icon>Add Language
+            </button>
+            <mat-list-item class="mobile-apps" *ngFor="let position of this.targetArray.controls let i=index" [formGroupName]="i">
+              <mat-form-field fxFlex="300px">
+                <mat-select placeholder="Mobile App" formControlName="mobileApp">
+                  <mat-option *ngFor="let mobileApp of this.MobileApps" [value]="mobileApp">
+                    {{ mobileApp.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button fxFlex="33px" mat-icon-button (click)="this.targetArray.removeAt(i)" type="button">
+                <mat-icon>close</mat-icon>
+              </button>
+            </mat-list-item>
+          </mat-list>
+        </div>
       </div>
       <div fxLayout="row" class="margin-top">
-        <button mat-button matStepperPrevious color="accent">Back</button>
+        <button mat-button matStepperPrevious color="accent" type="button">Back</button>
         <div class="flex-spacer"></div>
         <div *ngIf="formError" class="mat-caption error">{{formError}}</div>
-        <button mat-button color="warn" (click)="stepper.reset()">Reset</button>
-        <button mat-raised-button matStepperNext color="primary" type="submit" [disabled]="this.pushForm.invalid">Send</button>
+        <button mat-button color="warn" (click)="stepper.reset()" type="button">Reset</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="this.pushForm.invalid">Send</button>
       </div>
     </form>
   </mat-step>

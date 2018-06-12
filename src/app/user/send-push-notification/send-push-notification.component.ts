@@ -5,9 +5,15 @@ import {
   PushDateValidation,
   NumericInputValidation,
 } from '../../common/validations'
-import { IPushNotification, IMobileApp } from '../push-notification/push-notification'
+import {
+  IPushNotification,
+  IMobileApp,
+  MobileApps,
+} from '../push-notification/push-notification'
 import { PushNotificationService } from '../push-notification/push-notification.service'
 import { CacheService } from '../../auth/cache.service'
+import * as moment from 'moment'
+import { map, startWith } from 'rxjs/operators'
 
 @Component({
   selector: 'app-send-push-notification',
@@ -18,11 +24,35 @@ import { CacheService } from '../../auth/cache.service'
         color: red;
       }
     `,
+    `
+      .bold {
+        font-weight: bold;
+      }
+    `,
+    `
+      .date {
+        padding-top: 6px;
+      }
+    `,
+    `
+      .mobile-apps {
+        padding-top: 16px;
+      }
+    `,
   ],
 })
 export class SendPushNotificationComponent extends CacheService implements OnInit {
   pushForm: FormGroup
   formError: ''
+  scheduleDelivery = false
+  MobileApps = MobileApps.sort((a, b) => a.name.localeCompare(b.name))
+  minDate = moment()
+    .utc()
+    .toDate()
+  maxDate = moment()
+    .utc()
+    .add(1, 'months')
+    .toDate()
   constructor(
     private formBuilder: FormBuilder,
     private pushNotificationService: PushNotificationService
@@ -35,44 +65,39 @@ export class SendPushNotificationComponent extends CacheService implements OnIni
     this.buildPushForm(draftPn)
   }
 
+  scheduleDeliveryChange(event) {
+    this.scheduleDelivery = event.checked
+  }
+
+  get deliveryDate(): Date {
+    return this.pushForm.get('deliveryDate').value
+  }
+
+  get scheduledDate() {
+    const timezone = this.pushForm.get('receipientTimeZone').value
+    return timezone ? this.deliveryDate.toUTCString() : this.deliveryDate.toString()
+  }
+
+  onTimeChange(event) {
+    const timeString = event.currentTarget.value
+    const datetime = new Date(`1970-01-01T${timeString}Z`)
+    this.deliveryDate.setHours(datetime.getHours() + 1, datetime.getMinutes(), 0)
+  }
+
   buildPushForm(pn?: IPushNotification) {
     this.pushForm = this.formBuilder.group({
-      title: [
-        {
-          value: (pn && pn.title) || '',
-        },
-        RequiredTextValidation,
-      ],
-      message: [
-        {
-          value: (pn && pn.message) || '',
-        },
-        RequiredTextValidation,
-      ],
-      label: [
-        {
-          value: (pn && pn.label) || '',
-          help:
-            'Used to identify this message for Analytics purposes. Not shown to users.',
-        },
-        RequiredTextValidation,
-      ],
-      articleId: [
-        {
-          value: (pn && pn.articleId) || '',
-          help: 'Optional numerical ID of an Article that should open in the app.',
-        },
-        NumericInputValidation,
-      ],
+      title: [(pn && pn.title) || '', RequiredTextValidation],
+      message: [(pn && pn.message) || '', RequiredTextValidation],
+      label: [(pn && pn.label) || '', RequiredTextValidation],
+      articleId: [(pn && pn.articleId) || '', NumericInputValidation],
       deliveryDate: [
-        {
-          value: (pn && pn.deliveryDate) || '',
-          help:
-            'When this message should be sent. Now or schedule up to one month in advance.',
-        },
-        PushDateValidation,
+        pn && pn.deliveryDate ? new Date(pn.deliveryDate) : this.minDate,
+        Validators.required,
       ],
-      receipientTimeZone: [(pn && pn.receipientTimeZone) || true],
+      deliveryTime: [
+        pn && pn.deliveryDate ? new Date(pn.deliveryDate).toTimeString() : '00:00',
+      ],
+      receipientTimeZone: [(pn && pn.receipientTimeZone) || true, Validators.required],
       target: this.formBuilder.array(this.buildTargetArray(pn ? pn.target : [])),
     })
   }
@@ -94,18 +119,17 @@ export class SendPushNotificationComponent extends CacheService implements OnIni
       let i = 0
       targets.forEach(t => {
         i++
-        groups.push(this.buildTargetFormControl(i, t.appId, t.language))
+        groups.push(this.buildTargetFormControl(i, t))
       })
     }
 
     return groups
   }
 
-  private buildTargetFormControl(id, appId?: string, language?: string) {
+  private buildTargetFormControl(id, mobileApp?: IMobileApp) {
     return this.formBuilder.group({
       id: [id],
-      appId: [appId || '', Validators.required],
-      language: [language || ''],
+      mobileApp: mobileApp,
     })
   }
 
