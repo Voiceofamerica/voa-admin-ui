@@ -52,5 +52,6 @@ import { environment } from '../environments/environment'
     },
   ],
   bootstrap: [AppComponent],
+  entryComponents: [SimpleDialogComponent],
 })
 export class AppModule {}

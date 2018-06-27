@@ -1,19 +1,13 @@
 import { Component, OnInit } from '@angular/core'
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms'
-import {
-  RequiredTextValidation,
-  PushDateValidation,
-  NumericInputValidation,
-} from '../../common/validations'
-import {
-  IPushNotification,
-  IMobileApp,
-  MobileApps,
-} from '../push-notification/push-notification'
+import { RequiredTextValidation, NumericInputValidation } from '../../common/validations'
+import { IPushNotification, IMobileApp } from '../push-notification/push-notification'
 import { PushNotificationService } from '../push-notification/push-notification.service'
 import { CacheService } from '../../auth/cache.service'
 import * as moment from 'moment'
-import { map, startWith } from 'rxjs/operators'
+import { MobileApps } from './config-data'
+import { UiService } from '../../common/ui.service'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'app-send-push-notification',
@@ -42,10 +36,13 @@ import { map, startWith } from 'rxjs/operators'
   ],
 })
 export class SendPushNotificationComponent extends CacheService implements OnInit {
+  isBusy = false
   pushForm: FormGroup
   formError: ''
   scheduleDelivery = false
-  MobileApps = MobileApps.sort((a, b) => a.name.localeCompare(b.name))
+  MobileApps = MobileApps.sort((a, b) => a.name.localeCompare(b.name)).sort(
+    (a, b) => (a.disabled ? 1 : 0) - (b.disabled ? 1 : 0) || a.name.localeCompare(b.name)
+  )
   minDate = moment()
     .utc()
     .toDate()
@@ -55,7 +52,9 @@ export class SendPushNotificationComponent extends CacheService implements OnIni
     .toDate()
   constructor(
     private formBuilder: FormBuilder,
-    private pushNotificationService: PushNotificationService
+    private pushNotificationService: PushNotificationService,
+    private uiService: UiService,
+    private router: Router
   ) {
     super()
   }
@@ -133,9 +132,48 @@ export class SendPushNotificationComponent extends CacheService implements OnIni
     })
   }
 
+  clearCache() {
+    this.pushNotificationService.clearCache()
+  }
+
   async send(form: FormGroup) {
-    this.pushNotificationService
-      .send(form.value)
-      .subscribe(res => this.buildPushForm(res), err => (this.formError = err))
+    if (!this.targetArray.value[0] || !this.targetArray.value[0].mobileApp) {
+      this.uiService.showToast('Select a language before sending your message.')
+      return
+    }
+
+    this.uiService
+      .showDialog(
+        `${this.targetArray.value[0].mobileApp.name} Push Notification`,
+        'This message will reach all target mobile apps. This action cannot be undone.',
+        'Send Notification',
+        'Cancel'
+      )
+      .subscribe(res => {
+        if (res) {
+          this.sendPushNotificationHelper(form)
+        }
+      })
+  }
+
+  private sendPushNotificationHelper(form: FormGroup) {
+    this.isBusy = true
+
+    this.pushNotificationService.send(form.value).subscribe(
+      res => {
+        console.log(res)
+        this.uiService.showToast('Push Notification was sent successfully!')
+        this.router.navigate(['/home'])
+        this.isBusy = false
+      },
+      err => {
+        console.log(err)
+        this.uiService.showToast(
+          'Failed to send Push Notification. Contact system administrator.'
+        )
+        this.formError = err
+        this.isBusy = false
+      }
+    )
   }
 }

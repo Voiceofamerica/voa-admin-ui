@@ -41,6 +41,7 @@
     "@angular/router": "^6.0.4",
     "angularfire2": "^5.0.0-rc.10",
     "core-js": "^2.5.4",
+    "cors": "^2.8.4",
     "firebase": "^5.0.4",
     "jwt-decode": "^2.2.0",
     "moment": "^2.22.2",

@@ -64,7 +64,7 @@
       <div class="stepContent">
         <div class="mat-body-2 bold">Schedule Delivery (optional)</div>
         <div fxLayout="column" fxLayoutGap="10px">
-          <mat-slide-toggle aria-label="Schedule Delivery" (change)="scheduleDeliveryChange($event)">{{scheduleDelivery ? 'Send Later' : 'Send Now'}} </mat-slide-toggle>
+          <mat-slide-toggle aria-label="Schedule Delivery" (change)="scheduleDeliveryChange($event)" [disabled]="true">{{scheduleDelivery ? 'Send Later' : 'Send Now'}} </mat-slide-toggle>
           <div class="mat-caption">When this message should be sent. Now or schedule up to one month in advance.</div>
         </div>
         <div *ngIf="scheduleDelivery" fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="10px">
@@ -108,18 +108,18 @@
         <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="10px">
           <mat-list formArrayName="target">
             <h2 mat-subheader>Select Target Language(s)</h2>
-            <button mat-button (click)="this.addTarget()" type="button">
+            <button mat-button (click)="this.addTarget()" type="button" [disabled]="true">
               <mat-icon>add</mat-icon>Add Language
             </button>
             <mat-list-item class="mobile-apps" *ngFor="let position of this.targetArray.controls let i=index" [formGroupName]="i">
               <mat-form-field fxFlex="300px">
                 <mat-select placeholder="Mobile App" formControlName="mobileApp">
-                  <mat-option *ngFor="let mobileApp of this.MobileApps" [value]="mobileApp">
+                  <mat-option *ngFor="let mobileApp of this.MobileApps" [value]="mobileApp" [disabled]="mobileApp.disabled">
                     {{ mobileApp.name }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
-              <button fxFlex="33px" mat-icon-button (click)="this.targetArray.removeAt(i)" type="button">
+              <button fxFlex="33px" mat-icon-button (click)="this.targetArray.removeAt(i)" type="button" [disabled]="true">
                 <mat-icon>close</mat-icon>
               </button>
             </mat-list-item>
@@ -130,9 +130,10 @@
         <button mat-button matStepperPrevious color="accent" type="button">Back</button>
         <div class="flex-spacer"></div>
         <div *ngIf="formError" class="mat-caption error">{{formError}}</div>
-        <button mat-button color="warn" (click)="stepper.reset()" type="button">Reset</button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="this.pushForm.invalid">Send</button>
+        <button mat-button color="warn" (click)="stepper.reset(); clearCache()" type="button">Reset</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="pushForm.invalid || targetArray.length === 0 || isBusy">Send</button>
       </div>
+      <mat-progress-spinner style="float: 'right'; bottom: 0px" [value]="isBusy"></mat-progress-spinner>
     </form>
   </mat-step>
 </mat-horizontal-stepper>

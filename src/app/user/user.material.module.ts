@@ -9,6 +9,7 @@ import {
   MatSelectModule,
   MatStepperModule,
   MatSlideToggleModule,
+  MatProgressSpinnerModule,
 } from '@angular/material'
 
 @NgModule({
@@ -23,6 +24,7 @@ import {
     MatNativeDateModule,
     MatLineModule,
     MatSlideToggleModule,
+    MatProgressSpinnerModule,
   ],
   exports: [
     MatStepperModule,
@@ -35,6 +37,7 @@ import {
     MatNativeDateModule,
     MatLineModule,
     MatSlideToggleModule,
+    MatProgressSpinnerModule,
   ],
 })
 export class UserMaterialModule {}

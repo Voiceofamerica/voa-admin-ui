@@ -15,7 +15,7 @@ export class AuthHttpInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService, private router: Router) {}
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const jwt = this.authService.getToken()
-    const authRequest = req.clone({ setHeaders: { authorization: `Bearer ${jwt}` } })
+    const authRequest = req.clone({ setHeaders: { Authorization: `Bearer ${jwt}` } })
     return next.handle(authRequest).pipe(
       catchError((err, caught) => {
         if (err.status === 401) {

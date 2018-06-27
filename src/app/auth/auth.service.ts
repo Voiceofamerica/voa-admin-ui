@@ -2,9 +2,6 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import * as decode from 'jwt-decode'
 import { BehaviorSubject, Observable, of, throwError as observableThrowError } from 'rxjs'
-import { catchError, map } from 'rxjs/operators'
-import { environment } from '../../environments/environment'
-import { transformError } from '../common/common'
 import { CacheService } from './cache.service'
 import { Role } from './role.enum'
 import { AngularFireAuth } from 'angularfire2/auth'
@@ -21,10 +18,6 @@ export interface IAuthStatus {
   isAuthenticated: boolean
   userRole: Role
   userId: string
-}
-
-interface IServerAuthResponse {
-  accessToken: string
 }
 
 export const defaultAuthStatus = {
@@ -55,10 +48,15 @@ export class AuthService extends CacheService implements IAuthService {
 
     this.authProvider(email, password).then(
       res => {
-        this.authStatus.next({
-          isAuthenticated: true,
-          userRole: Role.Admin,
-          userId: res.user.uid,
+        const firebaseUser: User = res.user
+        firebaseUser.getIdToken().then(token => {
+          this.setToken(token)
+
+          this.authStatus.next({
+            isAuthenticated: true,
+            userRole: Role.Admin,
+            userId: firebaseUser.uid,
+          })
         })
       },
       err => {
@@ -66,14 +64,6 @@ export class AuthService extends CacheService implements IAuthService {
         return observableThrowError(err.message)
       }
     )
-
-    // .pipe(
-    //   map(value => {
-    //     this.setToken(value.accessToken)
-    //     return decode(value.accessToken) as IAuthStatus
-    //   }),
-    //   catchError(transformError)
-    // )
 
     return loginResponse
   }
