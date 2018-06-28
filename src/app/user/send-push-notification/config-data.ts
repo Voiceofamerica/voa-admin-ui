@@ -1,7 +1,7 @@
 import { IMobileApp } from '../push-notification/push-notification'
 
 export const MobileApps: IMobileApp[] = [
-  { appId: 'voavi', name: 'Vietanamese', language: 'vi', disabled: true },
+  { appId: 'voavi', name: 'Vietnamese', language: 'vi', disabled: true },
   { appId: 'voako', name: 'Korean', language: 'ko', disabled: true },
   { appId: 'voafa', name: 'Farsi', language: 'fa', disabled: false },
   { appId: 'voaur', name: 'Urdu', language: 'ur', disabled: true },

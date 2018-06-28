@@ -107,10 +107,10 @@
       <div class="stepContent">
         <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="10px">
           <mat-list formArrayName="target">
-            <h2 mat-subheader>Select Target Language(s)</h2>
-            <button mat-button (click)="this.addTarget()" type="button" [disabled]="true">
+            <h2 mat-subheader>Select Target Language</h2>
+            <!-- <button mat-button (click)="this.addTarget()" type="button" [disabled]="true">
               <mat-icon>add</mat-icon>Add Language
-            </button>
+            </button> -->
             <mat-list-item class="mobile-apps" *ngFor="let position of this.targetArray.controls let i=index" [formGroupName]="i">
               <mat-form-field fxFlex="300px">
                 <mat-select placeholder="Mobile App" formControlName="mobileApp">
@@ -119,9 +119,9 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
-              <button fxFlex="33px" mat-icon-button (click)="this.targetArray.removeAt(i)" type="button" [disabled]="true">
+              <!-- <button fxFlex="33px" mat-icon-button (click)="this.targetArray.removeAt(i)" type="button" [disabled]="true">
                 <mat-icon>close</mat-icon>
-              </button>
+              </button> -->
             </mat-list-item>
           </mat-list>
         </div>
@@ -130,7 +130,7 @@
         <button mat-button matStepperPrevious color="accent" type="button">Back</button>
         <div class="flex-spacer"></div>
         <div *ngIf="formError" class="mat-caption error">{{formError}}</div>
-        <button mat-button color="warn" (click)="stepper.reset(); clearCache()" type="button">Reset</button>
+        <button mat-button color="warn" (click)="stepper.reset(); clearCache()" type="button">Reset Form Data</button>
         <button mat-raised-button color="primary" type="submit" [disabled]="pushForm.invalid || targetArray.length === 0 || isBusy">Send</button>
       </div>
       <mat-progress-spinner style="float: 'right'; bottom: 0px" [value]="isBusy"></mat-progress-spinner>
