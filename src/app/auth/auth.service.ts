@@ -4,7 +4,7 @@ import * as decode from 'jwt-decode'
 import { BehaviorSubject, Observable, of, throwError as observableThrowError } from 'rxjs'
 import { CacheService } from './cache.service'
 import { Role } from './role.enum'
-import { AngularFireAuth } from 'angularfire2/auth'
+import { AngularFireAuth } from '@angular/fire/auth'
 import { User } from 'firebase'
 
 export interface IAuthService {

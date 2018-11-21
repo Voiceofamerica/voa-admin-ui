@@ -33,33 +33,53 @@ import { ObservableMedia } from '@angular/flex-layout'
     `,
   ],
   template: `
-  <div class="app-container">
-    <mat-toolbar color="primary" fxLayoutGap="8px" class="app-toolbar"
-      [class.app-is-mobile]="media.isActive('xs')">
-      <button *ngIf="displayAccountIcons" mat-icon-button (click)="sidenav.toggle()">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <a mat-icon-button routerLink="/home">
-        <mat-icon svgIcon="voa"></mat-icon><span class="mat-h2">VOA Mobile Admin</span>
-      </a>
-      <span class="flex-spacer"></span>
-      <button *ngIf="displayAccountIcons" mat-mini-fab routerLink="/user/profile"
-        matTooltip="Profile" aria-label="User Profile"><mat-icon>account_circle</mat-icon>
-      </button>
-      <button *ngIf="displayAccountIcons" mat-mini-fab routerLink="/user/logout"
-        matTooltip="Logout" aria-label="Logout"><mat-icon>lock_open</mat-icon>
-      </button>
-    </mat-toolbar>
-    <mat-sidenav-container class="app-sidenav-container">
-      <mat-sidenav #sidenav [mode]="media.isActive('xs') ? 'over' : 'side'"
-                  [fixedInViewport]="media.isActive('xs')" fixedTopGap="56">
-        <app-navigation-menu></app-navigation-menu>
-      </mat-sidenav>
-      <mat-sidenav-content>
-        <router-outlet class="app-container"></router-outlet>
-      </mat-sidenav-content>
-    </mat-sidenav-container>
-  </div>
+    <div class="app-container">
+      <mat-toolbar
+        color="primary"
+        fxLayoutGap="8px"
+        class="app-toolbar"
+        [class.app-is-mobile]="media.isActive('xs')"
+      >
+        <button *ngIf="displayAccountIcons" mat-icon-button (click)="sidenav.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <a mat-icon-button routerLink="/home">
+          <mat-icon svgIcon="voa"></mat-icon><span class="mat-h2">VOA Mobile Admin</span>
+        </a>
+        <span class="flex-spacer"></span>
+        <button
+          *ngIf="displayAccountIcons"
+          mat-mini-fab
+          routerLink="/user/profile"
+          matTooltip="Profile"
+          aria-label="User Profile"
+        >
+          <mat-icon>account_circle</mat-icon>
+        </button>
+        <button
+          *ngIf="displayAccountIcons"
+          mat-mini-fab
+          routerLink="/user/logout"
+          matTooltip="Logout"
+          aria-label="Logout"
+        >
+          <mat-icon>lock_open</mat-icon>
+        </button>
+      </mat-toolbar>
+      <mat-sidenav-container class="app-sidenav-container">
+        <mat-sidenav
+          #sidenav
+          [mode]="media.isActive('xs') ? 'over' : 'side'"
+          [fixedInViewport]="media.isActive('xs')"
+          fixedTopGap="56"
+        >
+          <app-navigation-menu></app-navigation-menu>
+        </mat-sidenav>
+        <mat-sidenav-content>
+          <router-outlet class="app-container"></router-outlet>
+        </mat-sidenav-content>
+      </mat-sidenav-container>
+    </div>
   `,
 })
 export class AppComponent implements OnInit {

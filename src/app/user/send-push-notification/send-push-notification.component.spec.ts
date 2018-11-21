@@ -1,6 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing'
 
 import { SendPushNotificationComponent } from './send-push-notification.component'
+import {
+  commonTestingProviders,
+  commonTestingModules,
+} from 'src/app/common/common.testing'
+import { UserMaterialModule } from '../user.material.module'
 
 describe('SendPushNotificationComponent', () => {
   let component: SendPushNotificationComponent
@@ -9,6 +14,8 @@ describe('SendPushNotificationComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [SendPushNotificationComponent],
+      providers: commonTestingProviders,
+      imports: commonTestingModules.concat(UserMaterialModule),
     }).compileComponents()
   }))
 
